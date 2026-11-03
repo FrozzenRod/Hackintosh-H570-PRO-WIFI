@@ -326,16 +326,6 @@ Some protections are reduced to accommodate the installed adaptations:
 
 These settings apply to this installation and should be reassessed before reuse.
 
-### Remaining checks
-
-- [ ] Identify the exact OpenCore version.
-- [ ] Validate `config.plist` with the matching version of `ocvalidate`.
-- [ ] Examine the ACPI tables, particularly `MaLd0n.aml`.
-- [ ] Confirm how the RTX 4060 Ti is handled under macOS.
-- [ ] Document USB mapping.
-- [ ] Identify the cause of the Ethernet / Wi-Fi conflict.
-- [ ] Review whether all components still present in the EFI are needed.
-
 ### My journey
 
 I started experimenting with Hackintosh in **2018** on an **Acer Iconia 484G64ns**, running Yosemite through Mojave, including Sierra and High Sierra. Display output worked, but without hardware graphics acceleration.
