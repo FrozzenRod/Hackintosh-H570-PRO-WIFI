@@ -2,6 +2,8 @@
 
 [Français](#français) · [English](#english)
 
+![macOS Tahoe 26.7.1 — ASUS TUF Gaming H570-PRO WIFI](assets/macos-tahoe-desktop.png)
+
 ## Français
 
 Configuration personnelle **OpenCore**, utilisée sous **macOS Tahoe 26.7.1**. Aucun problème constaté dans mon utilisation actuelle, avec **VoodooHDA pour l’audio** et le **Wi-Fi privilégié pour le réseau**. L’Ethernet reste désactivé à la suite d’un conflit observé avec les correctifs Wi-Fi.
@@ -34,6 +36,32 @@ Configuration personnelle **OpenCore**, utilisée sous **macOS Tahoe 26.7.1**. A
 | Audio | Fonctionnel avec VoodooHDA-Tahoe |
 | Ethernet | Désactivé pour préserver le Wi-Fi |
 | Cartographie USB | À documenter et à vérifier |
+
+### Avant de démarrer : créer ses identifiants SMBIOS
+
+L’archive publique a été nettoyée : `SystemSerialNumber`, `MLB` et `SystemUUID` sont vides et `ROM` contient six octets nuls, dans `config.plist` et `oldConfig.plist`. Le modèle `iMac20,1` est conservé. **Ces valeurs doivent être personnalisées avant utilisation.** Le fichier utilisé au démarrage est `EFI/OC/config.plist` ; `oldConfig.plist` est une ancienne configuration.
+
+1. Sauvegarder son EFI fonctionnel et travailler sur une copie, idéalement sur une clé USB de test. Ne pas remplacer les identifiants d’une installation déjà fonctionnelle simplement pour publier son EFI : nettoyer uniquement la copie destinée au partage.
+2. Télécharger [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) depuis son dépôt officiel, extraire l’archive et lancer `GenSMBIOS.command` sous macOS. Python peut être nécessaire selon l’environnement.
+3. Dans GenSMBIOS, utiliser l’option **Install/Update MacSerial**, puis **Generate SMBIOS**. Demander le modèle **`iMac20,1`**, correspondant à cette configuration.
+4. Ouvrir la copie de `EFI/OC/config.plist` avec un éditeur de plist, par exemple [ProperTree](https://github.com/corpnewt/ProperTree), puis renseigner `PlatformInfo → Generic` :
+
+   | Champ | Valeur à utiliser |
+   |---|---|
+   | `SystemProductName` | `iMac20,1` |
+   | `SystemSerialNumber` | Valeur **Serial** générée |
+   | `MLB` | Valeur **Board Serial** générée |
+   | `SystemUUID` | Valeur **SmUUID** générée |
+   | `ROM` | Une valeur propre à cette installation, de type **Data**, sur **6 octets** |
+
+5. Pour `ROM`, utiliser par exemple l’adresse MAC d’une interface réseau de la machine, sans les séparateurs `:` ou `-`, saisie en hexadécimal dans un champ **Data**. Ne pas la saisir comme une chaîne de texte. Ne pas conserver les six octets nuls de l’archive publique.
+6. Vérifier le numéro de série avec le service [Apple — Consulter la couverture](https://checkcoverage.apple.com/). Selon les recommandations Dortania, privilégier un numéro que le service indique comme **non valide** ; si un véritable Mac est reconnu, générer un autre jeu d’identifiants. Ce contrôle ne garantit pas à lui seul l’unicité du numéro.
+7. Enregistrer, vérifier les types des champs, puis contrôler le fichier avec la version d’`ocvalidate` correspondant à OpenCore. Tester le démarrage depuis la clé USB avant de remplacer l’EFI principal.
+8. Conserver les identifiants générés pour cette installation. Ne pas les partager, les réutiliser sur plusieurs machines ou les régénérer à chaque mise à jour.
+
+> Les services Apple ne sont pas garantis par la seule génération d’un SMBIOS. Ne pas utiliser les identifiants d’un véritable Mac ou ceux publiés par une autre personne.
+
+Références : [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) · [Dortania — PlatformInfo et ROM](https://dortania.github.io/OpenCore-Install-Guide/config.plist/skylake.html#platforminfo).
 
 ### Structure de l’EFI
 
@@ -127,6 +155,16 @@ La configuration réduit certaines protections pour accompagner les adaptations 
 
 Ces paramètres correspondent à cette installation et doivent être réévalués avant toute réutilisation.
 
+### Vérifications restantes
+
+- [ ] Identifier la version exacte d’OpenCore.
+- [ ] Valider `config.plist` avec la version correspondante d’`ocvalidate`.
+- [ ] Examiner les tables ACPI, notamment `MaLd0n.aml`.
+- [ ] Confirmer la gestion de la RTX 4060 Ti sous macOS.
+- [ ] Documenter la cartographie USB.
+- [ ] Identifier la cause du conflit Ethernet / Wi-Fi.
+- [ ] Vérifier l’utilité des composants encore présents dans l’EFI.
+
 ### Mon parcours
 
 J’ai commencé le Hackintosh en **2018**, sur un **Acer Iconia 484G64ns**, de Yosemite à Mojave, en passant par Sierra et High Sierra. L’affichage fonctionnait, mais sans accélération graphique matérielle.
@@ -169,6 +207,32 @@ Personal **OpenCore** configuration running **macOS Tahoe 26.7.1**. No issues ob
 | Audio | Working with VoodooHDA-Tahoe |
 | Ethernet | Disabled to keep Wi-Fi working |
 | USB mapping | Needs documentation and verification |
+
+### Before booting: generate your own SMBIOS identifiers
+
+The public archive has been sanitized: `SystemSerialNumber`, `MLB` and `SystemUUID` are empty, and `ROM` contains six zero bytes, in both `config.plist` and `oldConfig.plist`. The `iMac20,1` model is preserved. **Customize these values before use.** The boot configuration is `EFI/OC/config.plist`; `oldConfig.plist` is an older configuration.
+
+1. Back up your working EFI and work on a copy, preferably on a test USB drive. Do not change the identifiers of an existing working installation just to publish its EFI: sanitize only the copy intended for sharing.
+2. Download [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) from its official repository, extract it and run `GenSMBIOS.command` on macOS. Python may be required depending on your environment.
+3. In GenSMBIOS, select **Install/Update MacSerial**, then **Generate SMBIOS**. Request **`iMac20,1`**, the model used by this configuration.
+4. Open your copy of `EFI/OC/config.plist` using a plist editor such as [ProperTree](https://github.com/corpnewt/ProperTree), and fill in `PlatformInfo → Generic`:
+
+   | Field | Value |
+   |---|---|
+   | `SystemProductName` | `iMac20,1` |
+   | `SystemSerialNumber` | Generated **Serial** |
+   | `MLB` | Generated **Board Serial** |
+   | `SystemUUID` | Generated **SmUUID** |
+   | `ROM` | A value specific to this installation, stored as **Data**, exactly **6 bytes** |
+
+5. For `ROM`, you can use the MAC address of one of the machine’s network interfaces, without `:` or `-` separators, entered as hexadecimal in a **Data** field. Do not store it as a text string. Do not keep the public archive’s six zero bytes.
+6. Check the serial with [Apple — Check Coverage](https://checkcoverage.apple.com/). Following Dortania’s guidance, prefer a serial reported as **invalid**; if an actual Mac is recognized, generate a different set of identifiers. This check alone does not guarantee uniqueness.
+7. Save, verify field types, and validate the file using the `ocvalidate` version matching OpenCore. Test booting from the USB drive before replacing your main EFI.
+8. Keep the generated identifiers for this installation. Do not share them, reuse them across multiple machines or regenerate them with every update.
+
+> Generating SMBIOS identifiers alone does not guarantee Apple services will work. Do not use identifiers belonging to a real Mac or published by someone else.
+
+References: [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) · [Dortania — PlatformInfo and ROM](https://dortania.github.io/OpenCore-Install-Guide/config.plist/skylake.html#platforminfo).
 
 ### EFI structure
 
