@@ -127,16 +127,6 @@ La configuration réduit certaines protections pour accompagner les adaptations 
 
 Ces paramètres correspondent à cette installation et doivent être réévalués avant toute réutilisation.
 
-### Vérifications restantes
-
-- [ ] Identifier la version exacte d’OpenCore.
-- [ ] Valider `config.plist` avec la version correspondante d’`ocvalidate`.
-- [ ] Examiner les tables ACPI, notamment `MaLd0n.aml`.
-- [ ] Confirmer la gestion de la RTX 4060 Ti sous macOS.
-- [ ] Documenter la cartographie USB.
-- [ ] Identifier la cause du conflit Ethernet / Wi-Fi.
-- [ ] Vérifier l’utilité des composants encore présents dans l’EFI.
-
 ### Mon parcours
 
 J’ai commencé le Hackintosh en **2018**, sur un **Acer Iconia 484G64ns**, de Yosemite à Mojave, en passant par Sierra et High Sierra. L’affichage fonctionnait, mais sans accélération graphique matérielle.
